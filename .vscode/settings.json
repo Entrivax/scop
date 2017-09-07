@@ -1,0 +1,20 @@
+{
+	"files.associations": {
+		"ios": "c",
+		"__locale": "c",
+		"string": "c",
+		"bitset": "c",
+		"initializer_list": "c",
+		"iterator": "c",
+		"memory": "c",
+		"utility": "c",
+		"liblist.h": "c",
+		"atomic": "c",
+		"functional": "c",
+		"locale": "c",
+		"system_error": "c",
+		"tuple": "c",
+		"type_traits": "c",
+		"algorithm": "c"
+	}
+}
