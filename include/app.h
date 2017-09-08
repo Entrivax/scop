@@ -43,6 +43,10 @@ typedef struct		s_app
 	float			*vertices;
 	GLuint			vbo;
 	GLuint			vao;
+	t_lst			*triangles;
+	t_lst			*vertices;
+	t_lst			*normals;
+	t_lst			*uvs;
 }					t_app;
 
 typedef struct		s_vec3
@@ -52,7 +56,23 @@ typedef struct		s_vec3
 	float			z;
 }					t_vec3;
 
-typedef t_lst		t_face;
+typedef struct		s_vec2
+{
+	float			x;
+	float			y;
+}					t_vec3;
+
+typedef struct		s_vertex
+{
+	t_vec3			*v;
+	t_vec3			*n;
+	t_vec2			*uv;
+}					t_vertex;
+
+typedef struct		s_triangle
+{
+	t_vertex		vertices[3];
+}					t_triangle;
 
 void			parse_args(t_app *app, int argc, char **argv);
 t_shader_prog	*build_shader_prog(char *vspath, char *fspath);
