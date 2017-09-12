@@ -2,6 +2,13 @@
 
 in vec3 vp;
 
+uniform mat4 projection;
+uniform mat4 modelview;
+
+out float dist;
+
 void main() {
-	gl_Position = vec4(vp, 1.0);
+	vec4 cs_pos = modelview * vec4(vp, 1.0);
+	dist = -cs_pos.y;
+	gl_Position = projection * cs_pos;
 }

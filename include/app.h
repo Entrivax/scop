@@ -14,11 +14,13 @@
 # define APP_H
 
 # define BUF_SIZE 1024
+# define PI 3.14159265359f
 
 # include <stdlib.h>
 # include <fcntl.h>
 # include <unistd.h>
 # include <OpenGL/gl3.h>
+# include <math.h>
 # include "libft.h"
 # include "liblist.h"
 # include "mlx.h"
@@ -31,23 +33,13 @@ typedef struct		s_shader_prog
 	GLuint			pixel_program;
 }					t_shader_prog;
 
-typedef struct		s_app
+typedef struct		s_vec4
 {
-	void			*mlx;
-	void			*win;
-	int				width;
-	int				height;
-	char			*obj_file;
-	char			*tex_file;
-	t_shader_prog	*shader;
-	float			*vertices;
-	GLuint			vbo;
-	GLuint			vao;
-	t_lst			*triangles;
-	t_lst			*vertices;
-	t_lst			*normals;
-	t_lst			*uvs;
-}					t_app;
+	float			x;
+	float			y;
+	float			z;
+	float			w;
+}					t_vec4;
 
 typedef struct		s_vec3
 {
@@ -60,7 +52,33 @@ typedef struct		s_vec2
 {
 	float			x;
 	float			y;
-}					t_vec3;
+}					t_vec2;
+
+typedef struct		s_mat4
+{
+	float			m[16];
+}					t_mat4;
+
+typedef struct		s_app
+{
+	void			*mlx;
+	void			*win;
+	int				width;
+	int				height;
+	char			*obj_file;
+	char			*tex_file;
+	t_shader_prog	*shader;
+	GLuint			vbo;
+	GLuint			vao;
+	t_lst			*triangles;
+	t_vec3			*vertex_array;
+	t_lst			*vertices;
+	t_lst			*normals;
+	t_lst			*uvs;
+	t_mat4			modelview;
+	t_mat4			projection;
+	float			rot;
+}					t_app;
 
 typedef struct		s_vertex
 {
@@ -82,5 +100,9 @@ void			destroy_app(t_app *app);
 int				exit_window(void *param);
 int				loop(void *param);
 void			parse_obj(t_app *app);
+t_mat4			mat4_mult(t_mat4 m1, t_mat4 m2);
+t_mat4			mat4_translate(t_mat4 m, t_vec4 v);
+t_mat4			mat4_rotate(t_mat4 m, t_vec3 v);
+t_mat4			mat4_identity();
 
 #endif

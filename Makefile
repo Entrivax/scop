@@ -19,7 +19,12 @@ SRCFILES=main.c \
 		destroy_app.c \
 		exit_window.c \
 		loop.c \
+		mat4_identity.c \
+		mat4_mult.c \
+		mat4_rotate.c \
+		mat4_translate.c \
 		parse_args.c \
+		parse_obj.c \
 		sec_malloc.c \
 		start_app.c
 OBJ=$(addprefix $(OBJDIR),$(subst .c,.o,$(SRCFILES)))
@@ -38,7 +43,7 @@ LFLAGS=-L$(LIBXDIR) -lmlx -framework OpenGL -framework AppKit \
 
 .PHONY: all clean fclean re
 
-$(NAME): $(LIBFT) $(LIBX) $(OBJ)
+$(NAME): $(LIBFT) $(LIBLIST) $(LIBX) $(OBJ)
 	gcc -o $(NAME) $(OBJ) $(LFLAGS)
 
 all: $(NAME)

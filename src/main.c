@@ -17,21 +17,35 @@ void	init_mlx(t_app *app)
 	app->width = 800;
 	app->height = 600;
 	app->mlx = mlx_init();
+	app->rot = 0;
 	app->win = mlx_new_opengl_window(app->mlx, app->width, app->height, "scop");
 	mlx_hook(app->win, 17, 0, &exit_window, app);
 	mlx_loop_hook(app->mlx, &loop, app);
 }
 
+t_mat4	compute_projection(float near, float far, float aspect, float fov)
+{
+	float	zrange;
+	float	tanhalffov;
+	t_mat4	m;
+
+	tanhalffov = tan((PI / 180.f) * fov / 2.f);
+	zrange = near - far;
+	ft_bzero(&m, sizeof(t_mat4));
+	m.m[0] = 1.f / (tanhalffov * aspect);
+	m.m[5] = 1.f / tanhalffov;
+	m.m[10] = (-near - far) / zrange;
+	m.m[11] = 2 * far * near / zrange;
+	m.m[14] = 1.f;
+	return (m);
+}
+
 void	init_gl(t_app *app)
 {
-	float test[] = {
-		0.0f,  0.5f,  0.0f,
-		0.5f, -0.5f,  0.0f,
-		-0.5f, -0.5f,  0.0f
-	};
+	app->projection = compute_projection(0.0001f, 10.f, (float)app->width / (float)app->height, 70.f);
 	glGenBuffers(1, &app->vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, app->vbo);
-	glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), test, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, app->triangles->size * 3 * sizeof(float), app->vertex_array, GL_STATIC_DRAW);
 	glGenVertexArrays(1, &app->vao);
 	glBindVertexArray(app->vao);
 	glEnableVertexAttribArray(0);
@@ -51,6 +65,7 @@ t_app	*create_app(int argc, char **argv)
 
 	app = sec_malloc(sizeof(t_app));
 	parse_args(app, argc, argv);
+	parse_obj(app);
 	init_mlx(app);
 	init_gl(app);
 	return (app);

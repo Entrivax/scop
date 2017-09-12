@@ -32,7 +32,6 @@ t_lst	*split_keep_empty(char *str, char sep)
 	int		start;
 	int		i;
 	t_lst	*lst;
-	char	**split;
 
 	i = -1;
 	start = 0;
@@ -53,12 +52,11 @@ t_lst	*split(char *str, char sep)
 {
 	int		start;
 	int		i;
-	bool	cutting;
+	char	cutting;
 	t_lst	*lst;
-	char	**split;
 
 	i = -1;
-	cutting = false;
+	cutting = 0;
 	start = 0;
 	lst = list_new();
 	while (str[++i])
@@ -67,13 +65,13 @@ t_lst	*split(char *str, char sep)
 			continue;
 		if (!cutting && str[i] != sep)
 		{
-			cutting = true;
+			cutting = 1;
 			start = i;
 			continue;
 		}
 		if (cutting && str[i] == sep)
 		{
-			cutting = false;
+			cutting = 0;
 			list_add(lst, str_alloc_cpy(str, start, i - start));
 		}
 	}
@@ -90,22 +88,23 @@ t_vec3	*n_vec3(float x, float y, float z)
 	vec->x = x;
 	vec->y = y;
 	vec->z = z;
+	return (vec);
 }
 
-t_vec3	*n_vec2(float x, float y)
+t_vec2	*n_vec2(float x, float y)
 {
 	t_vec2	*vec;
 	
 	vec = (t_vec2 *)sec_malloc(sizeof(t_vec2));
 	vec->x = x;
 	vec->y = y;
+	return (vec);
 }
 
 int		parse_face(t_lst *splt, t_app *app, t_lst *faces)
 {
 	t_lst	*face;
 	int		i;
-	int		v;
 	t_lst	*slashes;
 	t_vertex	*vertex;
 
@@ -120,13 +119,13 @@ int		parse_face(t_lst *splt, t_app *app, t_lst *faces)
 	while (++i < splt->size)
 	{
 		vertex = (t_vertex *)sec_malloc(sizeof(t_vertex));
-		slashes = split_keep_empty(splt, '/');
+		slashes = split_keep_empty((char *)LGET(splt, i), '/');
 		if (slashes->size >= 1 && ft_isnumber(LGET(slashes, 0)))
-			vertex->v = (t_vec3 *)LGET(app->vertices, ft_atoi(LGET(slashes, 0))); // vertices["(v)/vt/vn"]
+			vertex->v = (t_vec3 *)LGET(app->vertices, ft_atoi(LGET(slashes, 0)) - 1); // vertices["(v)/vt/vn"]
 		if (slashes->size >= 2 && ft_isnumber(LGET(slashes, 1)))
-			vertex->uv = (t_vec2 *)LGET(app->uvs, ft_atoi(LGET(slashes, 1))); // vertices["v/(vt)/vn"]
+			vertex->uv = (t_vec2 *)LGET(app->uvs, ft_atoi(LGET(slashes, 1)) - 1); // vertices["v/(vt)/vn"]
 		if (slashes->size >= 3 && ft_isnumber(LGET(slashes, 2)))
-			vertex->n = (t_vec3 *)LGET(app->normals, ft_atoi(LGET(slashes, 2))); // vertices["v/vt/(vn)"]
+			vertex->n = (t_vec3 *)LGET(app->normals, ft_atoi(LGET(slashes, 2)) - 1); // vertices["v/vt/(vn)"]
 		list_add(face, vertex);
 		list_destroy_and_free_content(&slashes, &free);
 	}
@@ -136,9 +135,9 @@ int		parse_face(t_lst *splt, t_app *app, t_lst *faces)
 
 int		parse_split(t_lst *splt, t_app *app, t_lst *faces)
 {
-	if (splt.size == 0)
-		list_destroy(&split);
-	if (ft_strcmp("v", LGET(splt, 0)))
+	if (splt->size == 0)
+		list_destroy(&splt);
+	if (ft_strequ("v", LGET(splt, 0)))
 	{
 		if (splt->size != 4 || !ft_isnumber(LGET(splt, 1)) ||
 			!ft_isnumber(LGET(splt, 2)) || !ft_isnumber(LGET(splt, 3)))
@@ -146,7 +145,7 @@ int		parse_split(t_lst *splt, t_app *app, t_lst *faces)
 		list_add(app->vertices, n_vec3(ft_atof(LGET(splt, 1)),
 			ft_atof(LGET(splt, 2)), ft_atof(LGET(splt, 3))));
 	}
-	else if (ft_strcmp("vn", LGET(splt, 0)))
+	else if (ft_strequ("vn", LGET(splt, 0)))
 	{
 		if (splt->size != 4 || !ft_isnumber(LGET(splt, 1)) ||
 			!ft_isnumber(LGET(splt, 2)) || !ft_isnumber(LGET(splt, 3)))
@@ -154,7 +153,7 @@ int		parse_split(t_lst *splt, t_app *app, t_lst *faces)
 		list_add(app->normals, n_vec3(ft_atof(LGET(splt, 1)),
 			ft_atof(LGET(splt, 2)), ft_atof(LGET(splt, 3))));
 	}
-	else if (ft_strcmp("vt", LGET(splt, 0)))
+	else if (ft_strequ("vt", LGET(splt, 0)))
 	{
 		if (splt->size != 3 || !ft_isnumber(LGET(splt, 1)) ||
 			!ft_isnumber(LGET(splt, 2)))
@@ -162,16 +161,18 @@ int		parse_split(t_lst *splt, t_app *app, t_lst *faces)
 		list_add(app->uvs, n_vec2(ft_atof(LGET(splt, 1)),
 			ft_atof(LGET(splt, 2))));
 	}
-	else if (ft_strcmp("f", LGET(splt, 0)))
+	else if (ft_strequ("f", LGET(splt, 0)))
 	{
 		if (splt->size < 4 || parse_face(splt, app, faces))
 			return (1);
 	}
+	else if (ft_strnequ("#", LGET(splt, 0), 1))
+		return (0);
 	list_destroy_and_free_content(&splt, &free);
 	return (0);
 }
 
-void	create_lists(t_app *app)
+t_lst	*create_lists(t_app *app)
 {
 	if (app->vertices != NULL)
 		list_destroy_and_free_content(&app->vertices, &free);
@@ -210,13 +211,31 @@ t_lst	*triangulate(t_lst *faces)
 		while (++last_vertex < face_vertices->size)
 		{
 			triangle = (t_triangle *)sec_malloc(sizeof(t_triangle));
-			triangle->vertices[0] = LGET(face_vertices, 0);
-			triangle->vertices[1] = LGET(face_vertices, last_vertex - 1);
-			triangle->vertices[2] = LGET(face_vertices, last_vertex);
+			triangle->vertices[0] = *(t_vertex *)LGET(face_vertices, 0);
+			triangle->vertices[1] = *(t_vertex *)LGET(face_vertices, last_vertex - 1);
+			triangle->vertices[2] = *(t_vertex *)LGET(face_vertices, last_vertex);
 			list_add(triangles, triangle);
 		}
 	}
 	return (triangles);
+}
+
+t_vec3	*arrayfy_triangles(t_lst *triangles)
+{
+	t_vec3	*vertexes;
+	int		i;
+	t_triangle	*triangle;
+
+	vertexes = sec_malloc(sizeof(t_vec3) * triangles->size * 3);
+	i = -1;
+	while (++i < triangles->size)
+	{
+		triangle = ((t_triangle *)LGET(triangles, i));
+		vertexes[i * 3] = *triangle->vertices[0].v;
+		vertexes[i * 3 + 1] = *triangle->vertices[1].v;
+		vertexes[i * 3 + 2] = *triangle->vertices[2].v;
+	}
+	return vertexes;
 }
 
 void	parse_obj(t_app *app)
@@ -229,7 +248,7 @@ void	parse_obj(t_app *app)
 
 	faces = create_lists(app);
 	line = NULL;
-	if ((fd = open(app->obj_file)) < 0)
+	if ((fd = open(app->obj_file, O_RDONLY)) < 0)
 	{
 		ft_putendl("Unable to open obj file. Exiting...");
 		exit(1);
@@ -248,5 +267,6 @@ void	parse_obj(t_app *app)
 		line_count++;
 	}
 	app->triangles = triangulate(faces);
+	app->vertex_array = arrayfy_triangles(app->triangles);
 	list_destroy_and_free_content(&faces, &destroy_faces_list);
 }
