@@ -77,6 +77,7 @@ t_shader_prog	*build_shader_prog(char *vspath, char *fspath)
 	shader->pixel_fshader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(shader->pixel_fshader, 1, (const char * const*)&file_content, NULL);
 	glCompileShader(shader->pixel_fshader);
+	free(file_content);
 	create_program_and_attach_shaders(shader);
 	return (shader);
 }
