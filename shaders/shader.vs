@@ -9,6 +9,6 @@ out float dist;
 
 void main() {
 	vec4 cs_pos = modelview * vec4(vp, 1.0);
-	dist = -cs_pos.y;
+	dist = cs_pos.z;
 	gl_Position = projection * cs_pos;
 }

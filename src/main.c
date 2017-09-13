@@ -45,7 +45,7 @@ void	init_gl(t_app *app)
 	app->projection = compute_projection(0.0001f, 10.f, (float)app->width / (float)app->height, 70.f);
 	glGenBuffers(1, &app->vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, app->vbo);
-	glBufferData(GL_ARRAY_BUFFER, app->triangles->size * 3 * sizeof(float), app->vertex_array, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, app->triangles->size * 3 * 3 * sizeof(float), app->vertex_array, GL_STATIC_DRAW);
 	glGenVertexArrays(1, &app->vao);
 	glBindVertexArray(app->vao);
 	glEnableVertexAttribArray(0);

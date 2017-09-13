@@ -136,7 +136,7 @@ int		parse_face(t_lst *splt, t_app *app, t_lst *faces)
 int		parse_split(t_lst *splt, t_app *app, t_lst *faces)
 {
 	if (splt->size == 0)
-		list_destroy(&splt);
+		return (0);
 	if (ft_strequ("v", LGET(splt, 0)))
 	{
 		if (splt->size != 4 || !ft_isnumber(LGET(splt, 1)) ||
@@ -166,9 +166,6 @@ int		parse_split(t_lst *splt, t_app *app, t_lst *faces)
 		if (splt->size < 4 || parse_face(splt, app, faces))
 			return (1);
 	}
-	else if (ft_strnequ("#", LGET(splt, 0), 1))
-		return (0);
-	list_destroy_and_free_content(&splt, &free);
 	return (0);
 }
 
@@ -257,6 +254,7 @@ void	parse_obj(t_app *app)
 	while (get_next_line(fd, &line) > 0)
 	{
 		splt = split(line, ' ');
+		free(line);
 		if (parse_split(splt, app, faces))
 		{
 			ft_putstr("Failed to parse line ");
@@ -264,6 +262,7 @@ void	parse_obj(t_app *app)
 			ft_putendl(" Exiting...");
 			exit(1);
 		}
+		list_destroy_and_free_content(&splt, &free);
 		line_count++;
 	}
 	app->triangles = triangulate(faces);
