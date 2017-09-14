@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mat4_translate.c                                   :+:      :+:    :+:   */
+/*   key_events.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpilotto <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,13 +12,24 @@
 
 #include "app.h"
 
-t_mat4			mat4_translate(t_mat4 m, t_vec3 v)
+int				key_down(int keycode, void *param)
 {
-	t_mat4	res;
+	t_app	*app;
 
-	res = m;
-	res.m[3] += v.x;
-	res.m[3 + 4] += v.y;
-	res.m[3 + 4 + 4] += v.z;
-	return (res);
+	app = (t_app*)param;
+	if (keycode >= 300 || keycode < 0)
+		return (0);
+	app->keys[keycode] = 1;
+	return(0);
+}
+
+int				key_up(int keycode, void *param)
+{
+	t_app	*app;
+
+	app = (t_app*)param;
+	if (keycode >= 300 || keycode < 0)
+		return (0);
+	app->keys[keycode] = 0;
+	return(0);
 }

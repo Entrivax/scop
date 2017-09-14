@@ -18,6 +18,7 @@ SRCFILES=main.c \
 		build_shader_prog.c \
 		destroy_app.c \
 		exit_window.c \
+		key_events.c \
 		loop.c \
 		mat4_identity.c \
 		mat4_mult.c \

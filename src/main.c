@@ -20,7 +20,11 @@ void	init_mlx(t_app *app)
 	app->rot = 0;
 	app->win = mlx_new_opengl_window(app->mlx, app->width, app->height, "scop");
 	mlx_hook(app->win, 17, 0, &exit_window, app);
+	mlx_hook(app->win, 2, 0, &key_down, app);
+	mlx_hook(app->win, 3, 0, &key_up, app);
+	mlx_do_key_autorepeatoff(app->mlx);
 	mlx_loop_hook(app->mlx, &loop, app);
+	app->camera_speed = 0.1f;
 }
 
 t_mat4	compute_projection(float near, float far, float aspect, float fov)

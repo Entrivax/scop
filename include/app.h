@@ -72,12 +72,17 @@ typedef struct		s_app
 	GLuint			vao;
 	t_lst			*triangles;
 	t_vec3			*vertex_array;
+	t_vec3			object_trans;
+	t_vec3			camera_pos;
+	t_vec3			camera_rot;
+	float			camera_speed;
 	t_lst			*vertices;
 	t_lst			*normals;
 	t_lst			*uvs;
 	t_mat4			modelview;
 	t_mat4			projection;
 	float			rot;
+	char			keys[300];
 }					t_app;
 
 typedef struct		s_vertex
@@ -98,10 +103,12 @@ void			*sec_malloc(size_t size);
 void			start_app(t_app *app);
 void			destroy_app(t_app *app);
 int				exit_window(void *param);
+int				key_down(int keycode, void *param);
+int				key_up(int keycode, void *param);
 int				loop(void *param);
 void			parse_obj(t_app *app);
 t_mat4			mat4_mult(t_mat4 m1, t_mat4 m2);
-t_mat4			mat4_translate(t_mat4 m, t_vec4 v);
+t_mat4			mat4_translate(t_mat4 m, t_vec3 v);
 t_mat4			mat4_rotate(t_mat4 m, t_vec3 v);
 t_mat4			mat4_identity();
 

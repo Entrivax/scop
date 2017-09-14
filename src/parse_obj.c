@@ -235,6 +235,38 @@ t_vec3	*arrayfy_triangles(t_lst *triangles)
 	return vertexes;
 }
 
+void	compute_obj_translation(t_app *app)
+{
+	int		i;
+	t_vec3	v;
+	t_vec3	minmax[2];
+
+	if (app->triangles->size == 0)
+		return ;
+	minmax[0] = app->vertex_array[0];
+	minmax[1] = app->vertex_array[0];
+	i = 0;
+	while (++i < app->triangles->size * 3)
+	{
+		v = app->vertex_array[i];
+		if (v.x < minmax[0].x)
+			minmax[0].x = v.x;
+		else if (v.x > minmax[1].x)
+			minmax[1].x = v.x;
+		if (v.y < minmax[0].y)
+			minmax[0].y = v.y;
+		else if (v.y > minmax[1].y)
+			minmax[1].y = v.y;
+		if (v.z < minmax[0].z)
+			minmax[0].z = v.z;
+		else if (v.z > minmax[1].z)
+			minmax[1].z = v.z;
+	}
+	app->object_trans.x = -(minmax[0].x + minmax[1].x) / 2.f;
+	app->object_trans.y = -(minmax[0].y + minmax[1].y) / 2.f;
+	app->object_trans.z = -(minmax[0].z + minmax[1].z) / 2.f;
+}
+
 void	parse_obj(t_app *app)
 {
 	char	*line;
@@ -267,5 +299,6 @@ void	parse_obj(t_app *app)
 	}
 	app->triangles = triangulate(faces);
 	app->vertex_array = arrayfy_triangles(app->triangles);
+	compute_obj_translation(app);
 	list_destroy_and_free_content(&faces, &destroy_faces_list);
 }
