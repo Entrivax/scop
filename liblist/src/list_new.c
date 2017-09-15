@@ -22,12 +22,12 @@ t_lst	*list_new_with_alloc_size(int size)
 	t_lst	*list;
 
 	if ((list = ft_memalloc(sizeof(t_lst))) == NULL)
-		return (NULL);
+		exit_after_malloc_error();
 	list->size = 0;
 	if ((list->content = ft_memalloc(sizeof(void *) * size)) == NULL)
 	{
 		free(list);
-		return (NULL);
+		exit_after_malloc_error();
 	}
 	list->current_allocated_size = size;
 	return (list);

@@ -14,8 +14,8 @@
 
 void	init_mlx(t_app *app)
 {
-	app->width = 800;
-	app->height = 600;
+	app->width = 1920;
+	app->height = 1080;
 	app->mlx = mlx_init();
 	app->rot = 0;
 	app->win = mlx_new_opengl_window(app->mlx, app->width, app->height, "scop");
@@ -46,18 +46,32 @@ t_mat4	compute_projection(float near, float far, float aspect, float fov)
 
 void	init_gl(t_app *app)
 {
-	app->projection = compute_projection(0.0001f, 10.f, (float)app->width / (float)app->height, 70.f);
+	ft_putendl((char *)glGetString(GL_RENDERER));
+	ft_putendl((char *)glGetString(GL_VERSION));
+	app->projection = compute_projection(0.0001f, 100.f, (float)app->width / (float)app->height, 70.f);
+	if (app->tex_file != NULL)
+	{
+		glGenTextures(1, &app->texture);
+		glBindTexture(GL_TEXTURE_2D, app->texture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, app->tex_width,
+			app->tex_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, app->tex_data);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}
 	glGenBuffers(1, &app->vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, app->vbo);
 	glBufferData(GL_ARRAY_BUFFER, app->triangles->size * 3 * 3 * sizeof(float), app->vertex_array, GL_STATIC_DRAW);
+	glGenBuffers(1, &app->vbo2);
+	glBindBuffer(GL_ARRAY_BUFFER, app->vbo2);
+	glBufferData(GL_ARRAY_BUFFER, app->triangles->size * 3 * 2 * sizeof(float), app->uv_array, GL_STATIC_DRAW);
 	glGenVertexArrays(1, &app->vao);
 	glBindVertexArray(app->vao);
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, app->vbo);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	ft_putendl((char *)glGetString(GL_RENDERER));
-	ft_putendl((char *)glGetString(GL_VERSION));
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, app->vbo2);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	app->shader = build_shader_prog("./shaders/shader.vs", "./shaders/shader.fs");
@@ -70,6 +84,7 @@ t_app	*create_app(int argc, char **argv)
 	app = sec_malloc(sizeof(t_app));
 	parse_args(app, argc, argv);
 	parse_obj(app);
+	load_tex(app);
 	init_mlx(app);
 	init_gl(app);
 	return (app);

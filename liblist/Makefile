@@ -3,7 +3,8 @@ NAME=liblist.a
 SRCDIR=src/
 OBJDIR=obj/
 INCDIR=./include
-SRCFILES=list_add.c \
+SRCFILES=error.c \
+		list_add.c \
 		list_clear.c \
 		list_delete_at.c \
 		list_destroy.c \

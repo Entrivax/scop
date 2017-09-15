@@ -69,9 +69,15 @@ typedef struct		s_app
 	char			*tex_file;
 	t_shader_prog	*shader;
 	GLuint			vbo;
+	GLuint			vbo2;
 	GLuint			vao;
+	GLuint			texture;
+	int				tex_width;
+	int				tex_height;
+	unsigned char	*tex_data;
 	t_lst			*triangles;
 	t_vec3			*vertex_array;
+	t_vec2			*uv_array;
 	t_vec3			object_trans;
 	t_vec3			camera_pos;
 	t_vec3			camera_rot;
@@ -111,5 +117,9 @@ t_mat4			mat4_mult(t_mat4 m1, t_mat4 m2);
 t_mat4			mat4_translate(t_mat4 m, t_vec3 v);
 t_mat4			mat4_rotate(t_mat4 m, t_vec3 v);
 t_mat4			mat4_identity();
+void			load_tex(t_app *app);
+int				read_int(int fd, int *out);
+int				read_short(int fd, short *out);
+int				read_byte(int fd, unsigned char *out);
 
 #endif

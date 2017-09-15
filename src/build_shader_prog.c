@@ -64,19 +64,27 @@ t_shader_prog	*build_shader_prog(char *vspath, char *fspath)
 {
 	t_shader_prog	*shader;
 	char			*file_content;
+	GLint			success;
 
+	success = 0;
 	shader = sec_malloc(sizeof(t_shader_prog));
 	file_content = get_file_content(vspath,
 		"Unable to open vertex shader file. Exiting...");
 	shader->pixel_vshader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(shader->pixel_vshader, 1, (const char * const*)&file_content, NULL);
 	glCompileShader(shader->pixel_vshader);
+	glGetShaderiv(shader->pixel_vshader, GL_COMPILE_STATUS, &success);
+	if (success == GL_FALSE)
+		ft_putstr("Failed to build vertex shader");
 	free(file_content);
 	file_content = get_file_content(fspath,
 		"Unable to open fragment shader file. Exiting...");
 	shader->pixel_fshader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(shader->pixel_fshader, 1, (const char * const*)&file_content, NULL);
 	glCompileShader(shader->pixel_fshader);
+	glGetShaderiv(shader->pixel_fshader, GL_COMPILE_STATUS, &success);
+	if (success == GL_FALSE)
+		ft_putstr("Failed to build fragment shader");
 	free(file_content);
 	create_program_and_attach_shaders(shader);
 	return (shader);

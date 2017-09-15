@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   key_events.c                                       :+:      :+:    :+:   */
+/*   load_tex.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpilotto <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,24 +12,29 @@
 
 #include "app.h"
 
-int				key_down(int keycode, void *param)
+void	swap_bytes(unsigned char *c1, unsigned char *c2)
 {
-	t_app	*app;
+	unsigned char	tmp;
 
-	app = (t_app*)param;
-	if (keycode >= 300 || keycode < 0)
-		return (0);
-	app->keys[keycode] = 1;
-	return (0);
+	tmp = *c1;
+	*c1 = *c2;
+	*c2 = tmp;
 }
 
-int				key_up(int keycode, void *param)
+void	load_tex(t_app *app)
 {
-	t_app	*app;
+	int		fd;
+	int		i;
 
-	app = (t_app*)param;
-	if (keycode >= 300 || keycode < 0)
-		return (0);
-	app->keys[keycode] = 0;
-	return (0);
+	if ((fd = open(app->tex_file, O_RDONLY)) == -1)
+		return ;
+	if (read_int(fd, &app->tex_height) <= 0 || read_int(fd, &app->tex_width) <= 0)
+		return ;
+	app->tex_data = sec_malloc(sizeof(unsigned char) * app->tex_height * app->tex_width * 4);
+	i = -1;
+	while (++i < app->tex_width * app->tex_height)
+	{
+		read_int(fd, (int *)&app->tex_data[i * 4]);
+		swap_bytes(&app->tex_data[i * 4], &app->tex_data[i * 4 + 2]);
+	}
 }

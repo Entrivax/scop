@@ -20,7 +20,7 @@ int		list_add(t_lst *list, void *content)
 	{
 		if ((tmp = ft_memalloc(sizeof(void *) *
 			list->current_allocated_size * 2)) == NULL)
-			return (0);
+			exit_after_malloc_error();
 		ft_memcpy(tmp, list->content, sizeof(void *) *
 			list->current_allocated_size);
 		free(list->content);

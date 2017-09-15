@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   key_events.c                                       :+:      :+:    :+:   */
+/*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpilotto <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,26 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "app.h"
+#include "liblist.h"
 
-int				key_down(int keycode, void *param)
+void	exit_after_malloc_error()
 {
-	t_app	*app;
-
-	app = (t_app*)param;
-	if (keycode >= 300 || keycode < 0)
-		return (0);
-	app->keys[keycode] = 1;
-	return (0);
-}
-
-int				key_up(int keycode, void *param)
-{
-	t_app	*app;
-
-	app = (t_app*)param;
-	if (keycode >= 300 || keycode < 0)
-		return (0);
-	app->keys[keycode] = 0;
-	return (0);
+	ft_putendl("Error happened during memory allocation. Exiting...");
+	exit(-1);
 }

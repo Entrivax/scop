@@ -15,10 +15,12 @@ SRCDIR=src/
 OBJDIR=obj/
 INCDIR=./include
 SRCFILES=main.c \
+		binary_reader.c \
 		build_shader_prog.c \
 		destroy_app.c \
 		exit_window.c \
 		key_events.c \
+		load_tex.c \
 		loop.c \
 		mat4_identity.c \
 		mat4_mult.c \
