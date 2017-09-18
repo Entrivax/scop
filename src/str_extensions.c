@@ -42,7 +42,6 @@ t_lst	*split_keep_empty(char *str, char sep)
 		if (str[i] == sep)
 		{
 			list_add(lst, str_alloc_cpy(str, start, i - start - 1 + c));
-			c = 0;
 			start = i + 1;
 		}
 	list_add(lst, str_alloc_cpy(str, start, i - start));
