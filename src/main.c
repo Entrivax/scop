@@ -61,7 +61,7 @@ void	init_gl(t_app *app)
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, app->tex_width,
 			app->tex_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, app->tex_data);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, app->tex_filter);
 	}
 	glGenBuffers(1, &app->vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, app->vbo);
@@ -81,6 +81,7 @@ t_app	*create_app(int argc, char **argv)
 	t_app	*app;
 
 	app = sec_malloc(sizeof(t_app));
+	app->tex_filter = GL_LINEAR;
 	parse_args(app, argc, argv);
 	parse_obj(app);
 	load_tex(app);

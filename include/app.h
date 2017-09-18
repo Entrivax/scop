@@ -74,6 +74,7 @@ typedef struct		s_app
 	GLuint			texture;
 	int				tex_width;
 	int				tex_height;
+	GLint			tex_filter;
 	unsigned char	*tex_data;
 	t_lst			*triangles;
 	t_vec3			*vertex_array;

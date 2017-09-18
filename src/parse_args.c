@@ -18,7 +18,18 @@ void	parse_arg(t_app *app, int *arg, int argc, char **argv)
 	{
 		if (argc > *arg + 1)
 		{
-			app->tex_file = argv[*arg + 1];
+			app->tex_file = ft_strdup(argv[*arg + 1]);
+			(*arg)++;
+		}
+	}
+	if (argv[*arg][1] == 'f')
+	{
+		if (argc > *arg + 1)
+		{
+			if (ft_strequ("linear", argv[*arg + 1]))
+				app->tex_filter = GL_LINEAR;
+			else if (ft_strequ("nearest", argv[*arg + 1]))
+				app->tex_filter = GL_NEAREST;
 			(*arg)++;
 		}
 	}

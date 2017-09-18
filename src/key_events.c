@@ -93,5 +93,5 @@ void	on_key_down(int keycode, t_app *app)
 	if (keycode == 17 && app->tex_data != NULL)
 		app->mode_switch = !app->mode_switch;
 	if (keycode == 53)
-		exit(0);
+		exit_window((void*)app);
 }
