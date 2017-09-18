@@ -82,6 +82,8 @@ typedef struct		s_app
 	t_vec3			camera_pos;
 	t_vec3			camera_rot;
 	float			camera_speed;
+	char			mode_switch;
+	float			mode;
 	t_lst			*vertices;
 	t_lst			*normals;
 	t_lst			*uvs;
@@ -103,23 +105,40 @@ typedef struct		s_triangle
 	t_vertex		vertices[3];
 }					t_triangle;
 
-void			parse_args(t_app *app, int argc, char **argv);
-t_shader_prog	*build_shader_prog(char *vspath, char *fspath);
-void			*sec_malloc(size_t size);
-void			start_app(t_app *app);
-void			destroy_app(t_app *app);
-int				exit_window(void *param);
-int				key_down(int keycode, void *param);
-int				key_up(int keycode, void *param);
-int				loop(void *param);
-void			parse_obj(t_app *app);
-t_mat4			mat4_mult(t_mat4 m1, t_mat4 m2);
-t_mat4			mat4_translate(t_mat4 m, t_vec3 v);
-t_mat4			mat4_rotate(t_mat4 m, t_vec3 v);
-t_mat4			mat4_identity();
-void			load_tex(t_app *app);
-int				read_int(int fd, int *out);
-int				read_short(int fd, short *out);
-int				read_byte(int fd, unsigned char *out);
+void				parse_args(t_app *app, int argc, char **argv);
+t_shader_prog		*build_shader_prog(char *vspath, char *fspath);
+void				*sec_malloc(size_t size);
+void				start_app(t_app *app);
+void				destroy_app(t_app *app);
+int					exit_window(void *param);
+int					key_down(int keycode, void *param);
+int					key_up(int keycode, void *param);
+int					loop(void *param);
+void				parse_obj(t_app *app);
+t_mat4				mat4_mult(t_mat4 m1, t_mat4 m2);
+t_mat4				mat4_translate(t_mat4 m, t_vec3 v);
+t_mat4				mat4_rotate(t_mat4 m, t_vec3 v);
+t_mat4				mat4_identity(void);
+void				load_tex(t_app *app);
+int					read_int(int fd, int *out);
+int					read_short(int fd, short *out);
+int					read_byte(int fd, unsigned char *out);
+void				on_key_down(int keycode, t_app *app);
+void				process_keys(t_app *app);
+float				ft_clamp(float val, float min, float max);
+char				*read_all_text(int fd);
+t_mat4				compute_projection(float near, float far, float aspect,
+						float fov);
+t_lst				*split(char *str, char sep);
+t_lst				*split_keep_empty(char *str, char sep);
+t_vec3				*n_vec3(float x, float y, float z);
+t_vec2				*n_vec2(float x, float y);
+void				compute_obj_translation(t_app *app);
+t_vec3				*arrayfy_triangles_vert(t_lst *triangles);
+t_vec2				*arrayfy_triangles_uv(t_lst *triangles);
+t_lst				*triangulate(t_lst *faces);
+void				compute_missing_uvs(t_app *app);
+int					parse_split(t_lst *splt, t_app *app, t_lst *faces);
+void				compute_missing_uvs(t_app *app);
 
 #endif

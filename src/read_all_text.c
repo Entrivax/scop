@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   load_tex.c                                         :+:      :+:    :+:   */
+/*   read_all_text.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpilotto <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,19 +12,28 @@
 
 #include "app.h"
 
-void	load_tex(t_app *app)
+char			*read_all_text(int fd)
 {
-	int		fd;
-	int		i;
+	char	buffer[BUF_SIZE];
+	char	*content;
+	char	*tmp;
+	int		length;
+	int		content_length;
 
-	if ((fd = open(app->tex_file, O_RDONLY)) == -1)
-		return ;
-	if (read_int(fd, &app->tex_height) <= 0 ||
-		read_int(fd, &app->tex_width) <= 0)
-		return ;
-	app->tex_data = sec_malloc(sizeof(unsigned char) *
-		app->tex_height * app->tex_width * 4);
-	i = -1;
-	while (++i < app->tex_width * app->tex_height)
-		read_int(fd, (int *)&app->tex_data[i * 4]);
+	content_length = 0;
+	content = NULL;
+	while ((length = read(fd, buffer, BUF_SIZE)) > 0)
+	{
+		tmp = sec_malloc(content_length + length + 1);
+		if (content != NULL)
+			ft_memcpy(tmp, content, content_length);
+		ft_memcpy(tmp + content_length, buffer, length);
+		content_length += length;
+		if (content != NULL)
+			free(content);
+		content = tmp;
+	}
+	if (length < 0 && content != NULL)
+		free(content);
+	return (length < 0 ? NULL : content);
 }

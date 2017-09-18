@@ -12,7 +12,7 @@
 
 #include "liblist.h"
 
-void	exit_after_malloc_error()
+void	exit_after_malloc_error(void)
 {
 	ft_putendl("Error happened during memory allocation. Exiting...");
 	exit(-1);

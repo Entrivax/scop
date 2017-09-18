@@ -49,5 +49,6 @@ t_mat4			mat4_rotate(t_mat4 m, t_vec3 v)
 	z.x = 0;
 	z.y = 0;
 	z.z = 1;
-	return (mat4_mult(mat4_mult(mat4_mult(m, create_rot(v.x, x)), create_rot(v.y, y)), create_rot(v.z, z)));
+	return (mat4_mult(mat4_mult(mat4_mult(m, create_rot(v.x, x)),
+		create_rot(v.y, y)), create_rot(v.z, z)));
 }

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   load_tex.c                                         :+:      :+:    :+:   */
+/*   compute_missing_uvs.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpilotto <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,19 +12,27 @@
 
 #include "app.h"
 
-void	load_tex(t_app *app)
+void	compute_missing_uvs(t_app *app)
 {
-	int		fd;
-	int		i;
+	int			i[2];
+	t_vec2		*uv;
+	t_triangle	*triangle;
 
-	if ((fd = open(app->tex_file, O_RDONLY)) == -1)
-		return ;
-	if (read_int(fd, &app->tex_height) <= 0 ||
-		read_int(fd, &app->tex_width) <= 0)
-		return ;
-	app->tex_data = sec_malloc(sizeof(unsigned char) *
-		app->tex_height * app->tex_width * 4);
-	i = -1;
-	while (++i < app->tex_width * app->tex_height)
-		read_int(fd, (int *)&app->tex_data[i * 4]);
+	i[0] = -1;
+	while (++i[0] < app->triangles->size)
+	{
+		triangle = LGET(app->triangles, i[0]);
+		i[1] = -1;
+		while (++i[1] < 3)
+		{
+			if (triangle->vertices[i[1]].uv != NULL)
+				continue ;
+			uv = n_vec2(triangle->vertices[i[1]].v->z
+				- (int)triangle->vertices[i[1]].v->z,
+				triangle->vertices[i[1]].v->y
+				- (int)triangle->vertices[i[1]].v->y);
+			list_add(app->uvs, uv);
+			triangle->vertices[i[1]].uv = uv;
+		}
+	}
 }

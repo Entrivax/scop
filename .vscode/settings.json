@@ -16,6 +16,8 @@
 		"tuple": "c",
 		"type_traits": "c",
 		"algorithm": "c",
-		"app.h": "c"
+		"app.h": "c",
+		"cmath": "c",
+		"complex": "c"
 	}
 }

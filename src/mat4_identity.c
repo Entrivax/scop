@@ -12,7 +12,7 @@
 
 #include "app.h"
 
-t_mat4			mat4_identity()
+t_mat4			mat4_identity(void)
 {
 	t_mat4		m;
 

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   load_tex.c                                         :+:      :+:    :+:   */
+/*   loop.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpilotto <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,21 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "app.h"
-
-void	load_tex(t_app *app)
+float	ft_clamp(float val, float min, float max)
 {
-	int		fd;
-	int		i;
-
-	if ((fd = open(app->tex_file, O_RDONLY)) == -1)
-		return ;
-	if (read_int(fd, &app->tex_height) <= 0 ||
-		read_int(fd, &app->tex_width) <= 0)
-		return ;
-	app->tex_data = sec_malloc(sizeof(unsigned char) *
-		app->tex_height * app->tex_width * 4);
-	i = -1;
-	while (++i < app->tex_width * app->tex_height)
-		read_int(fd, (int *)&app->tex_data[i * 4]);
+	if (val < min)
+		return (min);
+	if (val > max)
+		return (max);
+	return (val);
 }

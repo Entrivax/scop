@@ -24,31 +24,36 @@ void	init_mlx(t_app *app)
 	mlx_hook(app->win, 3, 0, &key_up, app);
 	mlx_do_key_autorepeatoff(app->mlx);
 	mlx_loop_hook(app->mlx, &loop, app);
-	app->camera_speed = 0.1f;
+	app->camera_speed = 0.06f;
+	if (app->tex_data == NULL)
+	{
+		app->mode = 0;
+		app->mode_switch = 0;
+	}
 }
 
-t_mat4	compute_projection(float near, float far, float aspect, float fov)
+void	init_gl_2(t_app *app)
 {
-	float	zrange;
-	float	tanhalffov;
-	t_mat4	m;
-
-	tanhalffov = tan((PI / 180.f) * fov / 2.f);
-	zrange = near - far;
-	ft_bzero(&m, sizeof(t_mat4));
-	m.m[0] = 1.f / (tanhalffov * aspect);
-	m.m[5] = 1.f / tanhalffov;
-	m.m[10] = (-near - far) / zrange;
-	m.m[11] = 2 * far * near / zrange;
-	m.m[14] = 1.f;
-	return (m);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, app->vbo);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, app->vbo2);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	app->shader = build_shader_prog("./shaders/shader.vs",
+		"./shaders/shader.fs");
 }
 
 void	init_gl(t_app *app)
 {
 	ft_putendl((char *)glGetString(GL_RENDERER));
 	ft_putendl((char *)glGetString(GL_VERSION));
-	app->projection = compute_projection(0.0001f, 100.f, (float)app->width / (float)app->height, 70.f);
+	app->projection = compute_projection(0.0001f, 100.f, (float)app->width /
+		(float)app->height, 70.f);
 	if (app->tex_file != NULL)
 	{
 		glGenTextures(1, &app->texture);
@@ -60,21 +65,15 @@ void	init_gl(t_app *app)
 	}
 	glGenBuffers(1, &app->vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, app->vbo);
-	glBufferData(GL_ARRAY_BUFFER, app->triangles->size * 3 * 3 * sizeof(float), app->vertex_array, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, app->triangles->size * 3 * 3 * sizeof(float),
+		app->vertex_array, GL_STATIC_DRAW);
 	glGenBuffers(1, &app->vbo2);
 	glBindBuffer(GL_ARRAY_BUFFER, app->vbo2);
-	glBufferData(GL_ARRAY_BUFFER, app->triangles->size * 3 * 2 * sizeof(float), app->uv_array, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, app->triangles->size * 3 * 2 * sizeof(float),
+		app->uv_array, GL_STATIC_DRAW);
 	glGenVertexArrays(1, &app->vao);
 	glBindVertexArray(app->vao);
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, app->vbo);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, app->vbo2);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-	app->shader = build_shader_prog("./shaders/shader.vs", "./shaders/shader.fs");
+	init_gl_2(app);
 }
 
 t_app	*create_app(int argc, char **argv)

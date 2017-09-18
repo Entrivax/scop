@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   load_tex.c                                         :+:      :+:    :+:   */
+/*   triangulate.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpilotto <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,19 +12,30 @@
 
 #include "app.h"
 
-void	load_tex(t_app *app)
+t_lst	*triangulate(t_lst *faces)
 {
-	int		fd;
-	int		i;
+	int			face;
+	t_lst		*face_vertices;
+	int			last_vertex;
+	t_lst		*triangles;
+	t_triangle	*triangle;
 
-	if ((fd = open(app->tex_file, O_RDONLY)) == -1)
-		return ;
-	if (read_int(fd, &app->tex_height) <= 0 ||
-		read_int(fd, &app->tex_width) <= 0)
-		return ;
-	app->tex_data = sec_malloc(sizeof(unsigned char) *
-		app->tex_height * app->tex_width * 4);
-	i = -1;
-	while (++i < app->tex_width * app->tex_height)
-		read_int(fd, (int *)&app->tex_data[i * 4]);
+	face = -1;
+	triangles = list_new();
+	while (++face < faces->size)
+	{
+		face_vertices = LGET(faces, face);
+		last_vertex = 1;
+		while (++last_vertex < face_vertices->size)
+		{
+			triangle = (t_triangle *)sec_malloc(sizeof(t_triangle));
+			triangle->vertices[0] = *(t_vertex *)LGET(face_vertices, 0);
+			triangle->vertices[1] = *(t_vertex *)LGET(face_vertices,
+				last_vertex - 1);
+			triangle->vertices[2] = *(t_vertex *)LGET(face_vertices,
+				last_vertex);
+			list_add(triangles, triangle);
+		}
+	}
+	return (triangles);
 }

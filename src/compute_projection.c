@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   unit.h                                             :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpilotto <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,15 +10,21 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef UNIT_H
-# define UNIT_H
+#include "app.h"
 
-# define AT(r) if (atr((r), "\"" #r "\" to be TRUE", (char*)__func__)) return;
-# define AF(r) if (atr(!(r), "\"" #r "\" to be FALSE", (char*)__func__)) return;
-# define ASSERT(e,r) if (assert(e, r, #e " == " #r, (char*)__func__)) return;
+t_mat4	compute_projection(float near, float far, float aspect, float fov)
+{
+	float	zrange;
+	float	tanhalffov;
+	t_mat4	m;
 
-int		atr(long result, char *assertion, char *test);
-int		assert(long expected, long result, char *assertion, char *test);
-void	test(void (*f)(void), const char *test_name);
-
-#endif
+	tanhalffov = tan((PI / 180.f) * fov / 2.f);
+	zrange = near - far;
+	ft_bzero(&m, sizeof(t_mat4));
+	m.m[0] = 1.f / (tanhalffov * aspect);
+	m.m[5] = 1.f / tanhalffov;
+	m.m[10] = (-near - far) / zrange;
+	m.m[11] = 2 * far * near / zrange;
+	m.m[14] = 1.f;
+	return (m);
+}

@@ -35,6 +35,6 @@ void				list_free_all(t_lst *list, void (*f)(void *content));
 void				list_destroy(t_lst **list);
 void				list_destroy_and_free_content(t_lst **list,
 								void (*f)(void *content));
-void				exit_after_malloc_error();
+void				exit_after_malloc_error(void);
 
 #endif

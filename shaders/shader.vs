@@ -7,11 +7,12 @@ uniform mat4 projection;
 uniform mat4 modelview;
 
 out float dist;
+out vec4 viewspace;
 out vec2 uv;
 
 void main() {
-	vec4 cs_pos = modelview * vec4(vp, 1.0);
-	dist = cs_pos.z;
+	viewspace = modelview * vec4(vp, 1.0);
+	dist = viewspace.z;
 	uv = uvIn;
-	gl_Position = projection * cs_pos;
+	gl_Position = projection * viewspace;
 }

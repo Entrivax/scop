@@ -1,3 +1,4 @@
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   build_shader_prog.c                                :+:      :+:    :+:   */
@@ -11,33 +12,7 @@
 
 #include "app.h"
 
-char			*read_all_text(int fd)
-{
-	char	buffer[BUF_SIZE];
-	char	*content;
-	char	*tmp;
-	int		length;
-	int		content_length;
-
-	content_length = 0;
-	content = NULL;
-	while ((length = read(fd, buffer, BUF_SIZE)) > 0)
-	{
-		tmp = sec_malloc(content_length + length + 1);
-		if (content != NULL)
-			ft_memcpy(tmp, content, content_length);
-		ft_memcpy(tmp + content_length, buffer, length);
-		content_length += length;
-		if (content != NULL)
-			free(content);
-		content = tmp;
-	}
-	if (length < 0 && content != NULL)
-		free(content);
-	return length < 0 ? NULL : content;
-}
-
-void			create_program_and_attach_shaders(t_shader_prog	*shader)
+void			create_program_and_attach_shaders(t_shader_prog *shader)
 {
 	shader->pixel_program = glCreateProgram();
 	glAttachShader(shader->pixel_program, shader->pixel_fshader);
@@ -57,35 +32,58 @@ char			*get_file_content(char *filepath, char *error_message)
 		exit(1);
 	}
 	close(fd);
-	return file_content;
+	return (file_content);
+}
+
+void			build_vertex_shader(t_shader_prog *shader, char *vspath)
+{
+	char			*file_content;
+	GLint			success;
+
+	success = 0;
+	file_content = get_file_content(vspath,
+		"Unable to open vertex shader file. Exiting...");
+	shader->pixel_vshader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(shader->pixel_vshader, 1, (const char *const *)&file_content,
+		NULL);
+	glCompileShader(shader->pixel_vshader);
+	glGetShaderiv(shader->pixel_vshader, GL_COMPILE_STATUS, &success);
+	if (success == GL_FALSE)
+	{
+		ft_putstr("Failed to build vertex shader");
+		exit(1);
+	}
+	free(file_content);
+}
+
+void			build_fragment_shader(t_shader_prog *shader, char *fspath)
+{
+	char			*file_content;
+	GLint			success;
+
+	success = 0;
+	file_content = get_file_content(fspath,
+		"Unable to open fragment shader file. Exiting...");
+	shader->pixel_fshader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(shader->pixel_fshader, 1, (const char *const *)&file_content,
+		NULL);
+	glCompileShader(shader->pixel_fshader);
+	glGetShaderiv(shader->pixel_fshader, GL_COMPILE_STATUS, &success);
+	if (success == GL_FALSE)
+	{
+		ft_putstr("Failed to build fragment shader");
+		exit(1);
+	}
+	free(file_content);
 }
 
 t_shader_prog	*build_shader_prog(char *vspath, char *fspath)
 {
 	t_shader_prog	*shader;
-	char			*file_content;
-	GLint			success;
 
-	success = 0;
 	shader = sec_malloc(sizeof(t_shader_prog));
-	file_content = get_file_content(vspath,
-		"Unable to open vertex shader file. Exiting...");
-	shader->pixel_vshader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(shader->pixel_vshader, 1, (const char * const*)&file_content, NULL);
-	glCompileShader(shader->pixel_vshader);
-	glGetShaderiv(shader->pixel_vshader, GL_COMPILE_STATUS, &success);
-	if (success == GL_FALSE)
-		ft_putstr("Failed to build vertex shader");
-	free(file_content);
-	file_content = get_file_content(fspath,
-		"Unable to open fragment shader file. Exiting...");
-	shader->pixel_fshader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(shader->pixel_fshader, 1, (const char * const*)&file_content, NULL);
-	glCompileShader(shader->pixel_fshader);
-	glGetShaderiv(shader->pixel_fshader, GL_COMPILE_STATUS, &success);
-	if (success == GL_FALSE)
-		ft_putstr("Failed to build fragment shader");
-	free(file_content);
+	build_vertex_shader(shader, vspath);
+	build_fragment_shader(shader, fspath);
 	create_program_and_attach_shaders(shader);
 	return (shader);
 }
