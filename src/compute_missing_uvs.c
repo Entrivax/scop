@@ -27,10 +27,8 @@ void	compute_missing_uvs(t_app *app)
 		{
 			if (triangle->vertices[i[1]].uv != NULL)
 				continue ;
-			uv = n_vec2(triangle->vertices[i[1]].v->z
-				- (int)triangle->vertices[i[1]].v->z,
-				triangle->vertices[i[1]].v->y
-				- (int)triangle->vertices[i[1]].v->y);
+			uv = n_vec2(triangle->vertices[i[1]].v->z,
+				-triangle->vertices[i[1]].v->y);
 			list_add(app->uvs, uv);
 			triangle->vertices[i[1]].uv = uv;
 		}
